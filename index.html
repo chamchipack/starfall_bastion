@@ -50,9 +50,9 @@ button.danger:hover:not(:disabled){border-color:var(--red);box-shadow:0 0 14px r
 .go{font-size:26px;font-weight:700;padding:14px 64px;margin-top:26px}
 .hint{color:var(--dim);font-size:18px;position:absolute;bottom:28px}
 .h{font-family:var(--num);font-weight:700;font-size:40px;letter-spacing:.12em;margin:0}
-.cards{display:flex;gap:24px}
-.mcard{width:360px;padding:14px;display:flex;flex-direction:column;gap:8px;text-align:left;background:var(--panel);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-radius:12px}
-.mcard canvas{width:330px;height:186px;border-radius:8px;display:block}
+.cards{display:flex;flex-wrap:wrap;justify-content:center;gap:20px;max-width:1200px}
+.mcard{width:280px;padding:12px;display:flex;flex-direction:column;gap:8px;text-align:left;background:var(--panel);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-radius:12px}
+.mcard canvas{width:100%;height:auto;aspect-ratio:16/9;border-radius:8px;display:block}
 .mcard .nm{font-size:24px;font-weight:700}
 .mcard .meta{color:var(--dim);font-size:18px}
 .dcard{width:300px;padding:20px;display:flex;flex-direction:column;gap:10px;text-align:left;background:var(--panel);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-radius:12px}
