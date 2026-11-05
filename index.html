@@ -170,7 +170,12 @@ const MAPS = [
     base:[1180,350], pads:[[157,448],[1202,471],[785,239],[948,488],[806,453],[443,221],[713,502],[284,444],[410,446],[1157,204],[688,143],[343,239],[154,269],[1069,482],[566,360],[881,185],[510,462],[1063,248],[241,218],[957,252]] },
   { id:"void", name:"보이드 게이트", waves:40, accent:"#9b6bff", bgTop:"#0b0718", bgBottom:"#170f2e",
     paths:[ [[-40,110],[1100,110],[1180,170],[1180,530],[1100,590],[210,590],[130,530],[130,290],[210,230],[900,230],[980,290],[980,410],[900,470],[420,470],[360,420],[400,350],[720,350]] ],
-    base:[720,350], pads:[[284,444],[1011,508],[187,384],[75,211],[887,343],[1097,284],[942,165],[1096,415],[327,306],[344,529],[576,414],[1044,184],[473,407],[195,497],[629,273],[816,414],[904,542]] }
+    base:[720,350], pads:[[284,444],[1011,508],[187,384],[75,211],[887,343],[1097,284],[942,165],[1096,415],[327,306],[344,529],[576,414],[1044,184],[473,407],[195,497],[629,273],[816,414],[904,542]] },
+  // 갈림길: 두 경로가 같은 입구에서 출발해 위/아래로 갈라졌다가 [920,340]에서 다시 합쳐진다
+  { id:"titan", name:"타이탄 갈림협곡", waves:35, accent:"#7dff8a", bgTop:"#07150e", bgBottom:"#10261a",
+    paths:[ [[-40,340],[160,340],[250,340],[340,220],[460,170],[720,170],[840,220],[920,340],[1040,340],[1180,340]],
+            [[-40,340],[160,340],[250,340],[340,460],[460,510],[720,510],[840,460],[920,340]] ],
+    base:[1180,340], pads:[[651,278],[157,448],[1202,471],[948,488],[926,179],[372,347],[239,143],[557,433],[1157,204],[723,423],[474,252],[1069,482],[75,211],[234,526],[758,284],[1063,248],[179,226],[468,385]] }
 ];
 
 // split 특성이 죽을 때 남기는 적 (art: 그림은 스포어를 작게)
@@ -552,7 +557,7 @@ class MapSelect extends Scene {
     ui.innerHTML = `<div class="screen"><button class="back" data-act="back">← 뒤로</button><h1 class="h">SELECT MAP</h1>
       <div class="cards">${MAPS.map((m, i) => `<button class="mcard" data-act="map" data-i="${i}" style="border-color:${m.accent}55">
         <canvas width="660" height="372"></canvas><div class="nm" style="color:${m.accent}">${m.name}</div>
-        <div class="meta">웨이브 <span class="num">${m.waves}</span> · 입구 <span class="num">${m.paths.length}</span> · 건설 패드 <span class="num">${m.pads.length}</span></div></button>`).join('')}</div></div>`;
+        <div class="meta">웨이브 <span class="num">${m.waves}</span> · 입구 <span class="num">${new Set(m.paths.map(p => p[0] + '')).size}</span> · 건설 패드 <span class="num">${m.pads.length}</span></div></button>`).join('')}</div></div>`;
     ui.querySelectorAll('.mcard canvas').forEach((c, i) => c.getContext('2d').drawImage(mapPreview(MAPS[i]), 0, 0, c.width, c.height));
     ui.querySelector('.mcard').focus();
   }
@@ -601,7 +606,7 @@ const geoCache = {};
 function geo(m) {
   if (geoCache[m.id]) return geoCache[m.id];
   const paths = groundPaths(m);
-  const portals = paths.map(p => { const i = p.pts.findIndex(([x]) => x >= 36); const q = p.pts[Math.max(0, i)]; return [q[0], q[1]]; });
+  const portals = paths.map(p => { const i = p.pts.findIndex(([x]) => x >= 36); const q = p.pts[Math.max(0, i)]; return [q[0], q[1]]; }).filter((q, i, a) => a.findIndex(o => o[0] === q[0] && o[1] === q[1]) === i);  // 입구를 공유하는 경로는 포털 하나
   const fly = paths.map((p, i) => flyPath(p.pts[0], m.base));
   return geoCache[m.id] = { paths, portals, fly, base: m.base };
 }
